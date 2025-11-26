@@ -3,15 +3,18 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
+// FIX: Explicitly set views directory
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
 // Simple session management (in production, use express-session)
 let isAuthenticated = false;
-const BLOG_PASSWORD = "frankenstein"; // Change this to whatever you want!
+const BLOG_PASSWORD = process.env.BLOG_PASSWORD || "frankenstein";
 
 // Helper function to read articles
 function getArticles() {
@@ -251,7 +254,6 @@ app.post('/delete-post/:id', (req, res) => {
   res.redirect('/');
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Frankenstein blog running on port ${PORT}`);
 });
