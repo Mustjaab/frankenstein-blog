@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modern Prometheus - A Tech & Literature Blog</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>⚡ Modern Prometheus</h1>
+        <p>Where classic literature meets cutting-edge technology</p>
+        <% if (isAuthenticated) { %>
+            <a href="/new-post" class="new-post-btn">+ Write New Article</a>
+            <a href="/drafts" class="new-post-btn" style="background: #444;">📝 Drafts</a>
+            <a href="/logout" class="new-post-btn" style="background: #444;">🚪 Logout</a>
+        <% } else { %>
+            <a href="/login" class="new-post-btn">🔐 Admin Login</a>
+        <% } %>
+    </header>
+    
+    <% if (typeof posts !== 'undefined' && posts.length > 0) { %>
+        <div class="posts-grid">
+            <% posts.forEach(post => { %>
+                <div class="post-card">
+                    <div>
+                        <h2><a href="/post/<%= post.id %>" class="post-title"><%= post.title %></a></h2>
+                        <div class="post-meta">
+                            By <%= post.author %> on <%= post.date %>
+                        </div>
+                        <p class="excerpt"><%= post.excerpt %></p>
+                    </div>
+                    <div class="tags-container">
+                        <% post.tags.forEach(tag => { %>
+                            <span class="tag"><%= tag %></span>
+                        <% }); %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div class="empty-state">
+            <h3>No articles yet</h3>
+            <p>Be the first to share some knowledge about Frankenstein and AI!</p>
+            <% if (isAuthenticated) { %>
+                <a href="/new-post" class="new-post-btn">Write First Article</a>
+            <% } %>
+        </div>
+    <% } %>
+</body>
+</html>

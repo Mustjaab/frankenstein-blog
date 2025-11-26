@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= post.title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <a href="/" class="back-link">← Back to all posts</a>
+    
+    <article>
+        <h1 class="post-page"><%= post.title %></h1>
+        <p><em>By <%= post.author %> on <%= post.date %></em></p>
+        
+        <div class="tags" style="margin-bottom: 20px;">
+            <% post.tags.forEach(tag => { %>
+                <span class="tag"><%= tag %></span>
+            <% }); %>
+        </div>
+        
+        <div class="content">
+            <%- post.content %>
+        </div>
+
+        <% if (isAuthenticated) { %>
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #444;">
+            <form action="/delete-post/<%= post.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                <button type="submit" style="background: #8b0000; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                    🗑️ Delete This Post
+                </button>
+            </form>
+        </div>
+        <% } %>
+    </article>
+</body>
+</html>
