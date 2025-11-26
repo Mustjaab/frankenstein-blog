@@ -1,0 +1,211 @@
+/* Gothic Theme for Frankenstein Blog */
+body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+
+header {
+    border-bottom: 2px solid #8b0000;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+h1 {
+    color: #c9a116;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Grid Layout for Posts */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.post-card {
+    background: #2d2d2d;
+    border-radius: 8px;
+    padding: 25px;
+    border-left: 4px solid #8b0000;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    border-left-color: #d4af37;
+}
+
+.post-title {
+    color: #d4af37;
+    text-decoration: none;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+    display: block;
+    line-height: 1.3;
+}
+
+.post-title:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
+
+.post-meta {
+    color: #a0a0a0;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.excerpt {
+    color: #b8b8b8;
+    font-style: italic;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.tag {
+    background: #5c2e2e;
+    color: #ffb3b3;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.tags-container {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* Electric bolt separator */
+header h1::before {
+    content: "⚡";
+    margin-right: 15px;
+    filter: drop-shadow(0 0 3px #ffd700);
+}
+
+/* Navigation buttons */
+.new-post-btn {
+    display: inline-block;
+    background: #8b0000;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-right: 10px;
+    transition: background 0.3s ease;
+}
+
+.new-post-btn:hover {
+    background: #a00;
+    color: white;
+}
+
+/* Post page specific styles */
+.back-link {
+    color: #8b0000;
+    text-decoration: none;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.back-link:hover {
+    color: #ff0000;
+}
+
+article {
+    background: #2d2d2d;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    border: 1px solid #444;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.post-page h1 {
+    color: #d4af37;
+    border-bottom: 1px solid #8b0000;
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: #c9a116;
+    margin-top: 30px;
+}
+
+em {
+    color: #a0a0a0;
+}
+
+/* Empty state for no posts */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    grid-column: 1 / -1;
+}
+
+.empty-state h3 {
+    color: #d4af37;
+    margin-bottom: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    body {
+        padding: 15px;
+    }
+    
+    header {
+        margin-bottom: 30px;
+    }
+    
+    .post-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    .new-post-btn {
+        display: block;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+}
