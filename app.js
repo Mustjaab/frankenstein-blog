@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Simple session management (in production, use express-session)
 let isAuthenticated = false;
-const BLOG_PASSWORD = process.env.BLOG_PASSWORD || "frankenstein";
+const BLOG_PASSWORD = process.env.BLOG_PASSWORD || "change-in-production";
 
 // Helper function to read articles
 function getArticles() {
@@ -169,7 +169,7 @@ app.post('/save-draft', (req, res) => {
     title: req.body.title || 'Untitled Draft',
     excerpt: req.body.excerpt || '',
     content: req.body.content || '',
-    author: req.body.author || 'You',
+    author: req.body.author || 'Mustjaab',
     date: new Date().toISOString().split('T')[0],
     tags: tags,
     lastSaved: new Date().toLocaleString()
@@ -257,3 +257,4 @@ app.post('/delete-post/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Frankenstein blog running on port ${PORT}`);
 });
+
