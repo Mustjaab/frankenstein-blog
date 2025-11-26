@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "title": "Frankenstein's Monster: The Original AGI Warning",
+    "content": "<h2>The Modern Frankenstein Complex</h2><p>When tech leaders talk about AGI, they often echo Victor Frankenstein's ambition and hubris - creating life without considering the consequences. The narrative of \"playing god\" with artificial intelligence directly mirrors Shelley's 1818 warning.</p><h2>From Laboratory to Server Room</h2><p>The monster in Shelley's novel represents our fear of creation turning against us. Today's AI labs have become our modern laboratories, and the \"monster\" is the potential AGI that might escape our control.</p><h2>Immortal Through Media</h2><p>Just as Frankenstein's monster escaped the laboratory, the concept has escaped literature into our collective consciousness. Every time a tech CEO warns about AI risks, they're channeling Shelley's themes of irresponsible innovation.</p><p>Mary Shelley couldn't have predicted neural networks, but she perfectly captured the psychological dynamics between creators and their creations - a dynamic that plays out daily in Silicon Valley boardrooms.</p>",
+    "author": "You",
+    "date": "2024-01-15",
+    "excerpt": "How a 19th century novel predicts our modern AI anxieties",
+    "tags": [
+      "AI",
+      "Literature",
+      "Technology",
+      "Ethics"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "The Modern Prometheus: AI's Original Sin",
+    "content": "<h2>Playing God in the Digital Age</h2><p>If Victor Frankenstein were alive today, he'd be a Silicon Valley CEO. The same drive to \"breathe life into lifeless matter\" now manifests in the race to create artificial general intelligence.</p><h2>The Monster We Can't Control</h2><p>Shelley's monster becomes sentient and turns against its creator - a fear that resonates deeply in an era where AI systems can develop unexpected behaviors and \"emerge\" capabilities we never programmed.</p><h2>Ethical Abandonment</h2><p>Just as Frankenstein abandoned his creation, today's tech giants often release powerful AI systems without adequate safeguards or consideration for societal impact.</p><p>The modern prometheus isn't stealing fire from the gods - they're training large language models on NVIDIA GPUs.</p>",
+    "author": "You",
+    "date": "2024-01-16",
+    "excerpt": "Exploring the parallels between Gothic horror and tech ethics",
+    "tags": [
+      "AI Ethics",
+      "Gothic Literature",
+      "Innovation",
+      "Philosophy"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Allegory of Creationsim",
+    "excerpt": "By zooming out, Frankenstein's story also highlights the flaws of creationism.",
+    "content": "The relationship between Victor Frankenstein and the Creature, and how toxic it became illustrates the sort of relationship that one may follow through the lens and philosophy of creationism.",
+    "author": "You",
+    "date": "2025-11-26",
+    "tags": [
+      "AI Ethics"
+    ]
+  }
+]
