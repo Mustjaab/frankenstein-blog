@@ -98,6 +98,23 @@ app.get('/post/:id', (req, res) => {
   });
 });
 
+// New: load published post into editor
+app.get('/edit-post/:id', (req, res) => {
+  if (!isAuthenticated) return res.redirect('/login');
+
+  const articles = getArticles();
+  const post = articles.find(p => p.id === parseInt(req.params.id));
+  if (!post) return res.redirect('/');
+
+  // When rendering editor, provide 'post' (published) so the form can prefill
+  // Use rawContent if available (original markdown), otherwise fall back to content (HTML)
+  res.render('new-post', {
+    draft: null,
+    post: post,
+    isAuthenticated: isAuthenticated
+  });
+});
+
 // Authentication routes
 app.get('/login', (req, res) => {
   res.render('login');
@@ -143,6 +160,7 @@ app.get('/new-post', (req, res) => {
   
   res.render('new-post', { 
     draft: draft,
+    post: null,
     isAuthenticated: isAuthenticated
   });
 });
@@ -187,7 +205,7 @@ app.post('/save-draft', (req, res) => {
   res.redirect('/drafts?saved=1');
 });
 
-// Publish post (from draft or new)
+// Publish post (create new or update existing)
 app.post('/save-post', (req, res) => {
   if (!isAuthenticated) {
     return res.redirect('/login');
@@ -205,15 +223,45 @@ app.post('/save-post', (req, res) => {
       .filter(tag => tag !== '');
   }
   
+  // Raw markdown (store for future edits). Might be empty if user provided HTML only.
+  const rawContent = req.body.content || '';
   // Convert Markdown to HTML if content is provided
-  const content = req.body.content ? markdownToHtml(req.body.content) : '';
+  const contentHtml = rawContent ? markdownToHtml(rawContent) : '';
+
+  if (req.body.postId) {
+    // Update existing post
+    const postId = parseInt(req.body.postId);
+    const idx = articles.findIndex(p => p.id === postId);
+    if (idx !== -1) {
+      const updatedPost = {
+        ...articles[idx],
+        title: req.body.title || articles[idx].title,
+        excerpt: req.body.excerpt || articles[idx].excerpt,
+        content: contentHtml || articles[idx].content,
+        rawContent: rawContent || articles[idx].rawContent || '',
+        author: req.body.author || articles[idx].author,
+        date: new Date().toISOString().split('T')[0],
+        tags: tags
+      };
+      articles[idx] = updatedPost;
+      saveArticles(articles);
+      // Remove from drafts if it was a draft
+      if (req.body.draftId) {
+        const updatedDrafts = drafts.filter(d => d.id !== parseInt(req.body.draftId));
+        saveDrafts(updatedDrafts);
+      }
+      return res.redirect(`/post/${postId}`);
+    }
+    // fallthrough to create new if the ID wasn't found
+  }
   
   // Create new post
   const newPost = {
     id: articles.length > 0 ? Math.max(...articles.map(p => p.id)) + 1 : 1,
     title: req.body.title,
     excerpt: req.body.excerpt,
-    content: content,
+    content: contentHtml,
+    rawContent: rawContent,
     author: req.body.author,
     date: new Date().toISOString().split('T')[0],
     tags: tags
@@ -257,4 +305,3 @@ app.post('/delete-post/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Frankenstein blog running on port ${PORT}`);
 });
-

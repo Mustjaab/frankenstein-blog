@@ -1,293 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title><%= draft ? 'Edit Draft' : 'Write New Article' %> - Modern Prometheus</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .form-container {
-            max-width: 800px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #d4af37;
-            font-weight: bold;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            background: #2d2d2d;
-            border: 1px solid #444;
-            color: #e0e0e0;
-            border-radius: 4px;
-            font-family: Georgia, serif;
-        }
-        textarea {
-            min-height: 200px;
-            resize: vertical;
-        }
-        .btn {
-            background: #8b0000;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            margin-right: 10px;
-        }
-        .btn-draft {
-            background: #444;
-        }
-        .btn:hover {
-            opacity: 0.9;
-        }
-        .help-text {
-            color: #888;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .markdown-guide {
-            background: #2d2d2d;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-        .markdown-guide h4 {
-            color: #d4af37;
-            margin-top: 0;
-        }
-        .markdown-example {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            font-family: monospace;
-            font-size: 0.9em;
-        }
-        .markdown-example div {
-            padding: 5px;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .draft-notice {
-            background: #2d4d2d;
-            border: 1px solid #4a7a4a;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 20px;
-            color: #a0e0a0;
-        }
-        
-        /* Toolbar */
-        .toolbar {
-            background: #e0e0e0;
-            border: 1px solid #dcdcdc;
-            border-radius: 6px;
-            padding: 6px 10px;
-            margin-bottom: 10px;
-            display: flex;
-            gap: 6px;
-            font-family: Georgia, serif;
-        }
+<!-- new-post.ejs: editor used for drafting new posts, editing drafts, and editing published posts -->
+<h1><%= (post && post.id) ? 'Edit Post' : (draft && draft.id) ? 'Edit Draft' : 'New Post' %></h1>
 
-        .toolbar button {
-            background: brickred;
-            border: none;
-            color: #333;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s, transform 0.2s;
-        }
+<form action="/save-post" method="post">
+  <!-- If editing a published post, post.id will be present -->
+  <% if (post && post.id) { %>
+    <input type="hidden" name="postId" value="<%= post.id %>">
+  <% } %>
 
-        .toolbar button:hover {
-            background: #cc88cc;
-            transform: translateY(-1px);
-        }
+  <!-- If editing a draft, draft.id -->
+  <% if (draft && draft.id) { %>
+    <input type="hidden" name="draftId" value="<%= draft.id %>">
+  <% } %>
 
-        .toolbar button:active {
-            background: #bb77bb;
-        }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <header>
-            <h1>⚡ <%= draft ? 'Edit Draft' : 'Write New Article' %></h1>
-            <a href="/" class="back-link">← Back to Blog</a>
-            <a href="/drafts" class="new-post-btn" style="background: #444; margin-left: 10px;">📝 View Drafts</a>
-        </header>
+  <label>Title</label>
+  <input name="title" value="<%= (draft && draft.title) ? draft.title : (post && post.title) ? post.title : '' %>" required>
 
-        <% if (draft) { %>
-        <div class="draft-notice">
-            📋 Editing draft saved on: <%= draft.lastSaved %>
-        </div>
-        <% } %>
+  <label>Excerpt</label>
+  <input name="excerpt" value="<%= (draft && draft.excerpt) ? draft.excerpt : (post && post.excerpt) ? post.excerpt : '' %>">
 
-        <form id="postForm" action="/save-post" method="POST">
-            <input type="hidden" name="draftId" value="<%= draft ? draft.id : '' %>">
-            
-            <div class="form-group">
-                <label for="title">Article Title:</label>
-                <input type="text" id="title" name="title" value="<%= draft ? draft.title : '' %>" required>
-            </div>
+  <label>Author</label>
+  <input name="author" value="<%= (draft && draft.author) ? draft.author : (post && post.author) ? post.author : 'Mustjaab' %>">
 
-            <div class="form-group">
-                <label for="excerpt">Short Excerpt:</label>
-                <textarea id="excerpt" name="excerpt" rows="3" required><%= draft ? draft.excerpt : '' %></textarea>
-            </div>
+  <label>Tags (comma separated)</label>
+  <input name="tags" value="<%= (draft && draft.tags) ? draft.tags.join(', ') : (post && post.tags) ? post.tags.join(', ') : '' %>">
 
-            <div class="form-group">
-                <label for="content">Article Content (Markdown):</label> 
-                        <div class="toolbar" style="margin-bottom: 10px;">
-                        <button type="button" onclick="wrapSelection('**')">B</button>
-                        <button type="button" onclick="wrapSelection('*')">I</button>
-                        <button type="button" onclick="prependList()">1.</button>
-                        <button type="button" onclick="insertLink()" title="Insert Link">🔗 Link</button>
-                        <button type="button" onclick="insertTable()">🗄️ Table</button>
-                        <button type="button" onclick="clearContent()" style="background: #ff7f7f;">🗑️ Clear</button>
-                    </div>
-                <textarea id="content" name="content" rows="15"><%= draft ? draft.content : '' %></textarea> </div>
+  <label>Content (Markdown)</label>
+  <textarea name="content" rows="15"><%= (draft && draft.content) ? draft.content : (post && post.rawContent) ? post.rawContent : (post && post.content) ? post.content : '' %></textarea>
 
-            <div class="form-group">
-                <label for="tags">Tags:</label>
-                <input type="text" id="tags" name="tags" value="<%= draft ? draft.tags.join(', ') : '' %>" placeholder="AI, Literature, Ethics, Technology">
-                <div class="help-text">Separate tags with commas (e.g., "AI, Ethics, Frankenstein")</div>
-            </div>
+  <button type="submit">Publish</button>
+</form>
 
-            <div class="form-group">
-                <label for="author">Author:</label>
-                <input type="text" id="author" name="author" value="<%= draft ? draft.author : 'Mustjaab' %>" required>
-            </div>
+<hr>
 
-            <div class="button-group">
-                <button type="submit" class="btn">🚀 Publish Article</button>
-                <button type="button" onclick="saveDraft()" class="btn btn-draft">💾 Save Draft</button>
-            </div>
-        </form>
-    </div>
+<form action="/save-draft" method="post">
+  <% if (draft && draft.id) { %>
+    <input type="hidden" name="draftId" value="<%= draft.id %>">
+  <% } %>
 
-    <script>
-        function saveDraft() {
-            const form = document.getElementById('postForm');
-            form.action = '/save-draft';
-            form.submit();
-        }
-        
-        // Start auto-save when page loads
-        window.addEventListener('load', startAutoSave);
+  <!-- Duplicate inputs required by save-draft -->
+  <input name="title" type="hidden" value="<%= (draft && draft.title) ? draft.title : (post && post.title) ? post.title : '' %>">
+  <input name="excerpt" type="hidden" value="<%= (draft && draft.excerpt) ? draft.excerpt : (post && post.excerpt) ? post.excerpt : '' %>">
+  <input name="author" type="hidden" value="<%= (draft && draft.author) ? draft.author : (post && post.author) ? post.author : 'Mustjaab' %>">
+  <input name="tags" type="hidden" value="<%= (draft && draft.tags) ? draft.tags.join(', ') : (post && post.tags) ? post.tags.join(', ') : '' %>">
+  <textarea name="content" style="display:none;"><%= (draft && draft.content) ? draft.content : (post && post.rawContent) ? post.rawContent : (post && post.content) ? post.content : '' %></textarea>
 
-            // Markdown toolbar functions (existing)
-            function wrapSelection(wrapper) {
-            const textarea = document.getElementById('content');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
-            const before = textarea.value.substring(0, start);
-            const after = textarea.value.substring(end);
-            textarea.value = before + wrapper + selectedText + wrapper + after;
-            
-            textarea.selectionStart = start + wrapper.length;
-            textarea.selectionEnd = end + wrapper.length;
-            textarea.focus();
-        }
-
-        function prependList() {
-            const textarea = document.getElementById('content');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end) || textarea.value;
-            const lines = selectedText.split('\n');
-            const numbered = lines.map((line, i) => `${i + 1}. ${line}`).join('\n');
-
-            const before = textarea.value.substring(0, start);
-            const after = textarea.value.substring(end);
-            textarea.value = before + numbered + after;
-
-            textarea.selectionStart = start;
-            textarea.selectionEnd = start + numbered.length;
-            textarea.focus();
-        }
-
-        function insertLink() {
-            const textarea = document.getElementById('content');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-
-            let selectedText = textarea.value.substring(start, end);
-            if (!selectedText) {
-                selectedText = "link text";
-            }
-
-            const url = prompt("Enter URL for hyperlink:", "https://");
-            if (!url) return;
-
-            const markdownLink = `[${selectedText}](${url})`;
-
-            const before = textarea.value.substring(0, start);
-            const after = textarea.value.substring(end);
-            textarea.value = before + markdownLink + after;
-
-            textarea.selectionStart = textarea.selectionEnd = before.length + markdownLink.length;
-            textarea.focus();
-        }
-
-        function insertTable() {
-            let rows = prompt("Number of rows:");
-            let cols = prompt("Number of columns:");
-            rows = parseInt(rows);
-            cols = parseInt(cols);
-
-            if (!rows || !cols) return alert("Invalid input");
-
-            let table = "<table border='1' style='border-collapse: collapse; width: 100%; margin-bottom: 1em;'>\n";
-
-            // Add header row
-            table += "  <tr>";
-            for (let c = 0; c < cols; c++) {
-                table += "<th>Header</th>";
-            }
-            table += "</tr>\n";
-
-            // Add remaining rows
-            for (let r = 0; r < rows; r++) {
-                table += "  <tr>";
-                for (let c = 0; c < cols; c++) {
-                    table += "<td>Data</td>";
-                }
-                table += "</tr>\n";
-            }
-
-            table += "</table>\n";
-
-            const textarea = document.getElementById("content");
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-
-            textarea.value = text.substring(0, start) + table + text.substring(end);
-
-            textarea.selectionStart = textarea.selectionEnd = start + table.length;
-            textarea.focus();
-        }
-
-        function clearContent() {
-            if (confirm('Are you sure you want to clear all content?')) {
-                document.getElementById('content').value = '';
-            }
-        }
-    </script>
-</body>
-
-</html>
-
-
-
+  <button type="submit">Save as Draft</button>
+</form>
